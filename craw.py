@@ -7,7 +7,7 @@ import re
 import urllib2
 from datetime import datetime
 from time import sleep
-from matplotlib.pyplot import plot, show, xlabel, ylabel
+from matplotlib.pyplot import plot, show, xlabel, ylabel, legend
 from Interpolation import *
 import numpy as np
 
@@ -100,12 +100,14 @@ def TimeAnal(BoardName, start, end):
         XY.append([x1, y1, dy])
     aXY = np.array(XY)
 
-    plot(aXY[:, 0], aXY[:, 2], 'o--')
+    plot(aXY[:, 0], aXY[:, 2]*16, 'o--', label=u'增加速率')
+    plot(aXY[:, 0], aXY[:, 1], '*--', label=u'文章量')
+    legend()
     show()
 
 
 def main():
-    TimeAnal("C_Chat", 4650, 4670)
+    TimeAnal("C_Chat", 4630, 4670)
 
 
 if __name__ == "__main__":
