@@ -13,7 +13,7 @@ import numpy as np
 
 
 # In[2]:
-
+#取得貼文時間
 def GetPostTime(htmlstr):
     Post_regex = re.compile(r'</span><span class="article-meta-value">(.{1,100})</span></div>')
     article_meta_info = Post_regex.findall(htmlstr)
@@ -23,7 +23,7 @@ def GetPostTime(htmlstr):
 
 
 # In[3]:
-
+#取得貼文的網址
 def GetPostURL(boardhtml):
     Post_regex = re.compile(r'<a href="(.{1,200}\.html)">')
     urls = Post_regex.findall(boardhtml)
@@ -33,7 +33,7 @@ def GetPostURL(boardhtml):
 
 
 # In[4]:
-
+#取得看板的網址
 def GetBoardURL(BoardName, Start, End):
     head = "https://www.ptt.cc/bbs/"+BoardName+"/index"
     retlist = []
@@ -44,14 +44,14 @@ def GetBoardURL(BoardName, Start, End):
 
 
 # In[5]:
-
+#取得該網址的HTML碼
 def GetHTML(URL):
     content = urllib2.urlopen(URL).read()
     return content
 
 
 # In[48]:
-
+#向前的微分
 def differ(func, x, dx):
     return float(func(x+dx)-func(x))/dx
 
@@ -100,8 +100,6 @@ def TimeAnal(BoardName, start, end):
         XY.append([x1, y1, dy])
     aXY = np.array(XY)
 
-#    xlabel("從"+str(PostTime[0])+"所經過的時間(hr)")
-#    ylabel("水量(篇/每)"+str(1./factor)+"分鐘")
     plot(aXY[:, 0], aXY[:, 2], 'o--')
     show()
 
