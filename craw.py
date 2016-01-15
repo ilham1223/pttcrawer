@@ -10,6 +10,7 @@ from time import sleep
 from matplotlib.pyplot import plot, show, xlabel, ylabel, legend
 from Interpolation import *
 import numpy as np
+import requests
 
 
 # In[2]:
@@ -20,6 +21,7 @@ def GetPostTime(htmlstr):
     Stime = article_meta_info[3]
     date_object = datetime.strptime(Stime, '%a %b %d %H:%M:%S %Y')
     return date_object
+
 
 
 # In[3]:
@@ -49,6 +51,16 @@ def GetHTML(URL):
     content = urllib2.urlopen(URL).read()
     return content
 
+
+def Get18HTML(URL):
+    payload = {
+        'from': '/bbs/Gossiping/index.html',
+        'yes': 'yes'
+    }
+    rs = requests.session()
+    res = rs.post('https://www.ptt.cc/ask/over18', verify=False, data=payload)
+    res = rs.get(URL, verify=False)
+    return res.text
 
 # In[48]:
 #向前的微分

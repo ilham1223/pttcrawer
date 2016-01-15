@@ -13,6 +13,18 @@ import codecs
 
 
 # In[8]:
+def htmlmind(webhtml, m, M):
+    p = re.compile(u'[\w<>="()\-!|\?&}\+#{\',;\[\] :./\t\n\r\f\v推]')
+    article = re.sub(p, '', webhtml)
+    data = postminding(article, m, M)
+    return data
+
+
+def GetWordFreq(webhtml, word):
+    p = re.compile(word)
+    words = re.findall(p, webhtml)
+    return len(words)
+
 
 def postminding(mystr, min_len, max_len):
     N = len(mystr)
@@ -36,7 +48,7 @@ def postminding(mystr, min_len, max_len):
 # In[9]:
 
 def main():
-    p=re.compile(r'[\w^[ :./\t\n\r\f\v推]+')
+    p=re.compile(r'[ :./\t\n\r\f\v推]')
 
     f = codecs.open("test.dat","r","utf-8")
     mystr = f.read().strip('\n')
