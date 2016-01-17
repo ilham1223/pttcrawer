@@ -11,8 +11,7 @@ from matplotlib.pyplot import plot, show, xlabel, ylabel, legend
 from Interpolation import *
 import numpy as np
 import requests
-
-
+requests.packages.urllib3.disable_warnings()
 # In[2]:
 #取得貼文時間
 def GetPostTime(htmlstr):
@@ -23,6 +22,40 @@ def GetPostTime(htmlstr):
     return date_object
 
 
+def GetPostInfo(htmlstr):
+    Post_regex = re.compile(r'</span><span class="article-meta-value">(.{1,100})</span></div>')
+    article_meta_info = Post_regex.findall(htmlstr)
+    Stime = article_meta_info[3]
+    date_object = datetime.strptime(Stime, '%a %b %d %H:%M:%S %Y')
+    info = article_meta_info
+    info[-1] = date_object
+    return info
+
+
+
+class pushinfo:
+    def __init__(self, olist, year):
+        self.status = olist[0]
+        self.name = olist[1]
+        self.content = olist[2]
+        self.time = datetime.strptime(olist[3]+year, '%m/%d %H:%M%Y')
+        self.point = self.p(olist[0])
+
+    def p(self, x):
+        return {
+            u'推':1,
+            u'噓':-1,
+            u'→':0,
+        }[x]
+
+#此處編碼待修正
+    def __repr__(self):
+        return "%s %s %s %s"%(self.status, self.name,
+                              self.content, self.time)
+
+    def __str__(self):
+        return "%s %s %s %s"%(self.status, self.name,
+                              self.content, self.time)
 
 # In[3]:
 #取得貼文的網址
@@ -69,6 +102,17 @@ def differ(func, x, dx):
 
 
 # In[9]:
+
+def GetPush(webhtml):
+    pushre = re.compile(u'push-tag">(.+) </span>.+push-userid">(.+)</span>.+push-content">: (.+)</span>.+"push-ipdatetime"> (.+)')
+    mylist = re.findall(pushre, webhtml)
+    postdate = GetPostTime(webhtml)
+    year = str(postdate.year)
+    pushlist = []
+    for i in mylist:
+        push = pushinfo(i, year)
+        pushlist.append(push)
+    return pushlist
 
 
 def TimeAnal(BoardName, start, end):
@@ -118,8 +162,11 @@ def TimeAnal(BoardName, start, end):
     show()
 
 
+
 def main():
-    TimeAnal("C_Chat", 4630, 4670)
+#    TimeAnal("C_Chat", 4630, 4670)
+    html = GetHTML("https://www.ptt.cc/bbs/C_Chat/M.1452691553.A.187.html")
+    GetPush(html)
 
 
 if __name__ == "__main__":

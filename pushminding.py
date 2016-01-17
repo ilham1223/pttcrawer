@@ -4,7 +4,7 @@
 # In[1]:
 
 from minding import htmlmind, GetWordFreq
-from craw import GetHTML, Get18HTML
+from craw import GetHTML, Get18HTML, GetPush
 import craw as cw
 import re
 from time import sleep
@@ -13,8 +13,8 @@ import requests
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
+from matplotlib.dates import HourLocator, DateFormatter
 requests.packages.urllib3.disable_warnings()
-get_ipython().magic(u'matplotlib inline')
 
 
 # In[4]:
@@ -37,11 +37,11 @@ def TitleAdd(BoardNamem, Start, End, Keyword):
     data = []
     ww = Keyword
     freq = 0
-    tt = datetime.today()
-    TIME1 = tt
-    TIME2 = tt
     counter = 0
     for boardurl in board_waiting_list:
+        tt = datetime.today()
+        TIME1 = tt
+        TIME2 = tt
         board_html = GetHTML(boardurl)
         post_waiting_list = cw.GetPostURL(board_html)
         print boardurl
@@ -97,14 +97,15 @@ def xTitleAdd(BoardName, Start, End, KeyWord):
     data = []
     ww = KeyWord
     freq = 0
-    tt = datetime.today()
-    TIME1 = tt
-    TIME2 = tt
     counter = 0
     for boardurl in board_waiting_list:
         board_html = Get18HTML(boardurl)
         post_waiting_list = cw.GetPostURL(board_html)
         print boardurl
+        tt = datetime.today()
+        TIME1 = tt
+        TIME2 = tt
+        sleep(1)
         freq += GetWordFreq(board_html, ww)
         while TIME1 == tt or TIME2 == tt:
             i = 0
@@ -123,7 +124,7 @@ def xTitleAdd(BoardName, Start, End, KeyWord):
             if counter>5:
                 break
         data.append([TIME1, TIME2, freq])
-        return data
+    return data
 
 
 # In[19]:
@@ -156,17 +157,65 @@ def xPushAdd(BoardName, Start, End, Key):
 
 #繪製時間-關鍵字累積量圖
 def example2():
-    data = xPushAdd('Gossiping', 10440, 10460, u'黃安')
+    data = xPushAdd('Gossiping', 10440, 10450, u'黃安')
     adata = np.array(data)
     dates = matplotlib.dates.date2num(adata[:, 0])
-    plt.plot_date(dates, adata[:, 1])
+    plt.plot_date(dates, adata[:, 1], '--.')
+    plt.show()
 
-
+#計算八卦版系列文出現次數
+def example3():
+    key = u'被刪除'
+    hour = HourLocator()
+    data = xTitleAdd(u'Gossiping', 10644, 10710, key)
+    adata = np.array(data)
+    dates = matplotlib.dates.date2num(adata[:, 0])
+    datefmt = DateFormatter('%H:%M')
+    fig, ax = plt.subplots()
+    ax.plot_date(dates, adata[:, 2], '.')
+    ax.xaxis.set_major_locator(hour)
+    ax.xaxis.set_major_formatter(datefmt)
+    ax.autoscale_view()
+    ax.fmt_xdata = DateFormatter('%H:%M')
+    fig.autofmt_xdate()
+    ax.set_xlabel(u'時間')
+    ax.set_ylabel(u'累計發文數')
+    plt.show()
+    print data[-1][2]
 # In[ ]:
 
-example2()
+#繪製推文時間累計圖
+def example4():
+    html = Get18HTML("https://www.ptt.cc/bbs/Gossiping/M.1452956960.A.48F.html")
+    pushlist = GetPush(html)
+    data = []
+    counter = 0
+    hour = HourLocator()
+    for i in pushlist:
+        counter += 1
+        data.append([i.time, counter])
+    adata = np.array(data)
+    dates = matplotlib.dates.date2num(adata[:, 0])
+    datefmt = DateFormatter('%H:%M')
+    fig, ax = plt.subplots()
+    ax.plot_date(dates, adata[:, 1], '.')
+    ax.xaxis.set_major_locator(hour)
+    ax.xaxis.set_major_formatter(datefmt)
+    ax.autoscale_view()
+    ax.fmt_xdata = DateFormatter('%H:%M')
+    fig.autofmt_xdate()
+    ax.set_xlabel(u'時間')
+    ax.set_ylabel(u'累計推文數')
+    print "總共有{0}則推文".format(counter)
+    plt.show()
 
 
+def main():
+    example4()
+
+
+if __name__ == "__main__":
+    main()
 # In[ ]:
 
 
