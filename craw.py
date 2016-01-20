@@ -32,6 +32,17 @@ def GetPostInfo(htmlstr):
     return info
 
 
+class Post:
+    def __init__(self, htmlstr):
+        Post_regex = re.compile(r'</span><span class="article-meta-value">(.{1,100})</span></div>')
+        article_meta_info = Post_regex.findall(htmlstr)
+        Stime = article_meta_info[3]
+        date_object = datetime.strptime(Stime, '%a %b %d %H:%M:%S %Y')
+        info = article_meta_info
+        info[-1] = date_object
+        self.info = info
+        self.content = htmlstr
+
 
 class pushinfo:
     def __init__(self, olist, year):
@@ -113,7 +124,6 @@ def GetPush(webhtml):
         push = pushinfo(i, year)
         pushlist.append(push)
     return pushlist
-
 
 def TimeAnal(BoardName, start, end):
     board_waiting_list = GetBoardURL(BoardName, start, end)
