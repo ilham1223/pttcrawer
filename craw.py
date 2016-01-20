@@ -42,6 +42,7 @@ class Post:
         info[-1] = date_object
         self.info = info
         self.content = htmlstr
+        self.pushlist = GetPush(htmlstr)
 
 
 class pushinfo:
@@ -61,8 +62,7 @@ class pushinfo:
 
 #此處編碼待修正
     def __repr__(self):
-        return "%s %s %s %s"%(self.status, self.name,
-                              self.content, self.time)
+        return self.status+" "+self.name+" "+self.content+" "+str(self.time)
 
     def __str__(self):
         return "%s %s %s %s"%(self.status, self.name,
