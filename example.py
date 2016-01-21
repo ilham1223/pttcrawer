@@ -1,12 +1,13 @@
 
 # coding: utf-8
 
-# In[1]:
+'''
+此檔案為一些關於craw.py以及minding.py的使用範例
+'''
 
 from minding import htmlmind, GetWordFreq
 from craw import GetHTML, Get18HTML, GetPush
 import craw as cw
-import re
 from time import sleep
 from datetime import datetime
 import requests
@@ -19,7 +20,7 @@ requests.packages.urllib3.disable_warnings()
 
 # In[4]:
 
-#獲取C_Chat板上某篇文章中最常出現的詞彙
+# 獲取C_Chat板上某篇文章中最常出現的詞彙
 def example1():
     url = "https://www.ptt.cc/bbs/C_Chat/M.1452827989.A.48C.html"
     webhtml = GetHTML(url)
@@ -31,7 +32,7 @@ def example1():
 
 # In[8]:
 
-#獲取非18x版面上的關鍵字累計
+# 獲取非18x版面上的關鍵字累計
 def TitleAdd(BoardNamem, Start, End, Keyword):
     board_waiting_list = cw.GetBoardURL(BoardNamem, Start, End)
     data = []
@@ -60,22 +61,19 @@ def TitleAdd(BoardNamem, Start, End, Keyword):
             except:
                 print "GET NO TIME2", post_waiting_list[-j]
                 j += 1
-            if counter>5:
+            if counter > 5:
                 break
         data.append([TIME1, TIME2, freq])
         return data
 
 
-# In[7]:
-
-#獲取內文（包含推文）的關鍵字累計
-#獲取版面上的關鍵字累計
+# 獲取內文（包含推文）的關鍵字累計
+# 獲取版面上的關鍵字累計
 def PushAdd(BoardName, Start, End, Keyword):
     board_waiting_list = cw.GetBoardURL(BoardName, Start, End)
     data = []
     ww = Keyword
     freq = 0
-    counter = 0
     for boardurl in board_waiting_list:
         board_html = GetHTML(boardurl)
         post_waiting_list = cw.GetPostURL(board_html)
@@ -91,13 +89,12 @@ def PushAdd(BoardName, Start, End, Keyword):
 
 # In[12]:
 
-#獲取18x版面上的關鍵字累計
+# 獲取18x版面上的關鍵字累計
 def xTitleAdd(BoardName, Start, End, KeyWord):
     board_waiting_list = cw.GetBoardURL(BoardName, Start, End)
     data = []
     ww = KeyWord
     freq = 0
-    counter = 0
     for boardurl in board_waiting_list:
         board_html = Get18HTML(boardurl)
         post_waiting_list = cw.GetPostURL(board_html)
@@ -110,7 +107,6 @@ def xTitleAdd(BoardName, Start, End, KeyWord):
         while TIME1 == tt or TIME2 == tt:
             i = 0
             j = 1
-            counter += 1
             try:
                 TIME1 = cw.GetPostTime(Get18HTML(post_waiting_list[i]))
             except:
@@ -121,21 +117,18 @@ def xTitleAdd(BoardName, Start, End, KeyWord):
             except:
                 print "GET NO TIME2", post_waiting_list[-j]
                 j += 1
-            if counter>5:
-                break
         data.append([TIME1, TIME2, freq])
     return data
 
 
 # In[19]:
 
-#獲取18x版面內文（包含推文）的關鍵字累計
+# 獲取18x版面內文（包含推文）的關鍵字累計
 def xPushAdd(BoardName, Start, End, Key):
     board_waiting_list = cw.GetBoardURL(BoardName, Start, End)
     data = []
     ww = Key
     freq = 0
-    counter = 0
     for boardurl in board_waiting_list:
         board_html = Get18HTML(boardurl)
         post_waiting_list = cw.GetPostURL(board_html)
@@ -155,7 +148,7 @@ def xPushAdd(BoardName, Start, End, Key):
 
 # In[26]:
 
-#繪製時間-關鍵字累積量圖
+# 繪製時間-關鍵字累積量圖
 def example2():
     data = xPushAdd('Gossiping', 10440, 10450, u'黃安')
     adata = np.array(data)
@@ -163,7 +156,9 @@ def example2():
     plt.plot_date(dates, adata[:, 1], '--.')
     plt.show()
 
-#計算八卦版系列文出現次數
+# 計算八卦版系列文出現次數
+
+
 def example3():
     key = u'被刪除'
     hour = HourLocator()
@@ -184,7 +179,9 @@ def example3():
     print data[-1][2]
 # In[ ]:
 
-#繪製推文時間累計圖
+# 繪製推文時間累計圖
+
+
 def example4():
     html = Get18HTML("https://www.ptt.cc/bbs/Gossiping/M.1452956960.A.48F.html")
     pushlist = GetPush(html)
@@ -217,6 +214,3 @@ def main():
 if __name__ == "__main__":
     main()
 # In[ ]:
-
-
-
