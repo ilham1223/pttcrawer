@@ -183,7 +183,7 @@ def example3():
 
 
 def example4():
-    html = Get18HTML("https://www.ptt.cc/bbs/Gossiping/M.1452956960.A.48F.html")
+    html = Get18HTML("https://www.ptt.cc/bbs/Gossiping/M.1453350815.A.725.html")
     pushlist = GetPush(html)
     data = []
     counter = 0
@@ -203,7 +203,6 @@ def example4():
     fig.autofmt_xdate()
     ax.set_xlabel(u'時間')
     ax.set_ylabel(u'累計推文數')
-    print "總共有{0}則推文".format(counter)
     plt.show()
 
 
