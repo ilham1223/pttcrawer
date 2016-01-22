@@ -221,7 +221,7 @@ def download_pic(pic_url, dir):
 # 下載正妹圖
 def example5():
     start = 1700
-    end = 1705
+    end = 1702
     board_waiting_list = cw.GetBoardURL("Beauty", start, end)
     for boardurl in board_waiting_list:
         sleep(1)
