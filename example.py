@@ -15,6 +15,10 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.dates import HourLocator, DateFormatter
+import urllib
+import multiprocessing
+import os
+import re
 requests.packages.urllib3.disable_warnings()
 
 
@@ -183,7 +187,7 @@ def example3():
 
 
 def example4():
-    html = Get18HTML("https://www.ptt.cc/bbs/Gossiping/M.1453350815.A.725.html")
+    html = Get18HTML("https://www.ptt.cc/bbs/Gossiping/M.1453329346.A.940.html")
     pushlist = GetPush(html)
     data = []
     counter = 0
@@ -206,9 +210,67 @@ def example4():
     plt.show()
 
 
-def main():
-    example4()
+def download_pic(pic_url, dir):
+    try:
+        pic_name = dir + '/' + pic_url.split('/')[-1]
+        urllib.urlretrieve(pic_url, pic_name)
+    except IOError as ioerr:
+        print "IOError in download picture: " + pic_url + ioerr
 
+
+# 下載正妹圖
+def example5():
+    start = 1700
+    end = 1705
+    board_waiting_list = cw.GetBoardURL("Beauty", start, end)
+    for boardurl in board_waiting_list:
+        sleep(1)
+        boardhtml = cw.GetHTML(boardurl)
+        print boardurl
+        post_waiting_list = cw.GetPostURL(boardhtml)
+        for pourl in post_waiting_list:
+            sleep(1)
+            posthtml = cw.GetHTML(pourl)
+            post = cw.Post(posthtml)
+            if post.point() >= 50:
+                try:
+                    post_download(post)
+                    print "downloading..."+post.info[2]
+                except:
+                    print "error for download "+pourl+" "+post.info[2]
+
+
+def post_download(post):
+    dir_name = post.info[2]
+    html = post.content
+    pic_regex = re.compile(
+        u'<img src="(.+[{jpg}{png}])" alt'
+    )
+
+    if not os.path.exists(dir_name):
+        try:
+            print os.mkdir(dir_name)
+        except:
+            print "error could not mkdir"
+
+    pic_urls = pic_regex.findall(html)
+    for i in range(len(pic_urls)):
+        pic_urls[i] = u'http:'+pic_urls[i]
+
+    for i in pic_urls:
+        p = multiprocessing.Process(target = download_pic, args = (i, dir_name))
+        p.start()
+    p.join
+
+def test():
+    htmp = cw.GetHTML("https://www.ptt.cc//bbs/Beauty/M.1453278594.A.F2E.html")
+    post = cw.Post(htmp)
+    post_download(post)
+
+
+def main():
+    example5()
+#    test()
 
 if __name__ == "__main__":
     main()

@@ -12,7 +12,7 @@
 
 ## 參考：
  - PTT 評論行為分析 – 以太陽花學運期間為例/ 王銘宏(http://whogovernstw.org/2016/01/05/minghungwang1/)
-
+ - 部分程式碼修改自：https://github.com/JIElite/PTT_Beauty_Spider
 ## TODO
  - 備份文章的功能(使用sqlite)
  - XX之亂的預測

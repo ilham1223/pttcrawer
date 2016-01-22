@@ -24,6 +24,12 @@ class Post:
         self.content = htmlstr
         self.pushlist = GetPush(htmlstr)
 
+    def point(self):
+        counter = 0
+        for i in self.pushlist:
+            counter += i.point
+        return counter
+
 
 class pushinfo:
 
